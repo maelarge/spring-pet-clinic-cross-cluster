@@ -1,0 +1,36 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: pony-pet
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: pony-pet
+spec:
+  build:
+    env:
+    - name: BP_GRADLE_BUILD_FILE # workaround https://github.com/paketo-buildpacks/java/issues/423
+      value: /foo
+  env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: postgres  
+  serviceClaims:
+  - name: db
+    ref:
+      apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+      kind: ResourceClaim
+      name: external-postgres-db-claim
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: gitops_ssh_secret
+    value: gitops-ssh
+  - name: gitops_repository
+    value: ssh://git@github.com/Mpluya/config-pony-pet.git
+  - name: gitops_branch
+    value: main
+  source:
+    git:
+      url: https://github.com/Mpluya/spring-pet-clinic.git
+      ref:
+        branch: main
