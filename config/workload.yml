@@ -1,10 +1,11 @@
 apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
-  name: pony-pet
+  name: ppclaim
   labels:
     apps.tanzu.vmware.com/workload-type: web
-    app.kubernetes.io/part-of: pony-pet
+    app.kubernetes.io/part-of: ppclaim
+    apps.tanzu.vmware.com/has-tests: "true"
 spec:
   build:
     env:
@@ -18,7 +19,7 @@ spec:
     ref:
       apiVersion: services.apps.tanzu.vmware.com/v1alpha1
       kind: ResourceClaim
-      name: external-postgres-db-claim
+      name: petclinic-db-claim
   params:
   - name: annotations
     value:
@@ -26,11 +27,11 @@ spec:
   - name: gitops_ssh_secret
     value: gitops-ssh
   - name: gitops_repository
-    value: ssh://git@github.com/Mpluya/config-pony-pet.git
+    value: ssh://git@github.com/maelarge/config-spring-pet-clinic-cross-ns.git
   - name: gitops_branch
     value: main
   source:
     git:
-      url: https://github.com/Mpluya/spring-pet-clinic.git
+      url: https://github.com/maelarge/spring-pet-clinic-cross-ns.git
       ref:
         branch: main
